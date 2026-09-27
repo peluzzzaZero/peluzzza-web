@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reparte los gastos, los turnos y la compra de un piso compartido. Sin cuenta, en este móvil.">
+<title>Reparte — gastos del piso</title>
+<style>
+  :root {
+    --ink: #1c1915;
+    --paper: #f4efe6;
+    --card: #fffaf3;
+    --line: #e2d8c8;
+    --accent: #c4512c;
+    --accent-ink: #fff8f4;
+    --good: #2f6b4f;
+    --bad: #9a3412;
+    --mute: #6d645b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  header, main, footer { width: min(720px, calc(100% - 28px)); margin: 0 auto; }
+  header { padding: 28px 0 8px; }
+  .mark { font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); font-family: system-ui, sans-serif; }
+  h1 { font-size: 42px; line-height: 0.95; margin: 6px 0 8px; font-weight: 650; }
+  .lede { color: var(--mute); margin: 0 0 16px; font-size: 18px; }
+  nav { display: flex; gap: 8px; margin: 8px 0 18px; }
+  nav button, .row button, form button, .ghost {
+    font-family: system-ui, sans-serif;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+  nav button[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  form button, .primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  section { display: none; }
+  section.on { display: block; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 16px;
+    margin: 0 0 12px;
+  }
+  label { display: block; font-family: system-ui, sans-serif; font-size: 12px; color: var(--mute); margin: 8px 0 4px; }
+  input, select {
+    width: 100%;
+    font: 16px system-ui, sans-serif;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .people { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    background: #efe6d8;
+    border-radius: 999px;
+    padding: 6px 10px;
+  }
+  .chip button { border: 0; background: transparent; color: var(--bad); font-size: 14px; }
+  .bal { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-family: system-ui, sans-serif; }
+  .pos { color: var(--good); }
+  .neg { color: var(--bad); }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li.item { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .mute { color: var(--mute); font-family: system-ui, sans-serif; font-size: 13px; }
+  .checkline { display: flex; align-items: center; gap: 8px; font-family: system-ui, sans-serif; }
+  .checkline input { width: auto; }
+  footer { padding: 8px 0 36px; color: var(--mute); font-family: system-ui, sans-serif; font-size: 13px; }
+  a { color: var(--accent); }
+  @media (max-width: 560px) { h1 { font-size: 34px; } .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">Piso compartido</div>
+  <h1>Reparte</h1>
+  <p class="lede">Gastos, turnos y compra. Se queda en este móvil. Sin cuenta y sin subir nada a un servidor.</p>
+  <nav>
+    <button type="button" data-tab="gastos" aria-selected="true">Gastos</button>
+    <button type="button" data-tab="turnos" aria-selected="false">Turnos</button>
+    <button type="button" data-tab="compra" aria-selected="false">Compra</button>
+  </nav>
+</header>
+<main>
+  <section id="gastos" class="on">
+    <div class="card">
+      <form id="add-person">
+        <label for="person">Quién vive aquí</label>
+        <div class="grid">
+          <input id="person" name="person" maxlength="24" placeholder="Nombre" required>
+          <button type="submit">Añadir</button>
+        </div>
+      </form>
+      <div id="people" class="people" style="margin-top:10px"></div>
+    </div>
+    <div class="card">
+      <form id="add-expense">
+        <label for="concept">Gasto</label>
+        <input id="concept" maxlength="60" placeholder="Supermercado, luz, alquiler…" required>
+        <div class="grid">
+          <div>
+            <label for="amount">Importe (€)</label>
+            <input id="amount" inputmode="decimal" placeholder="24,50" required>
+          </div>
+          <div>
+            <label for="payer">Quién pagó</label>
+            <select id="payer" required></select>
+          </div>
+        </div>
+        <button type="submit" style="margin-top:12px">Apuntar gasto</button>
+      </form>
+    </div>
+    <div class="card">
+      <strong>Quién debe a quién</strong>
+      <div id="balances"></div>
+      <div id="settle" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <strong>Últimos gastos</strong>
+      <ul id="expenses"></ul>
+    </div>
+  </section>
+  <section id="turnos">
+    <div class="card">
+      <form id="add-chore">
+        <label for="chore">Tarea de la casa</label>
+        <div class="grid">
+          <input id="chore" maxlength="40" placeholder="Cocina, baño, basura…" required>
+          <button type="submit">Añadir</button>
+        </div>
+      </form>
+      <p class="mute">El turno rota cada semana entre las personas del piso. Pulsa «hecho» para pasar al siguiente.</p>
+      <ul id="chores"></ul>
+    </div>
+  </section>
+  <section id="compra">
+    <div class="card">
+      <form id="add-item">
+        <label for="item">Lista de la compra</label>
+        <div class="grid">
+          <input id="item" maxlength="50" placeholder="Leche, café, detergente…" required>
+          <button type="submit">Añadir</button>
+        </div>
+      </form>
+      <ul id="shop"></ul>
+      <button type="button" class="ghost" id="clear-done" style="margin-top:10px">Quitar lo comprado</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <p>Borrador de convivencia, no un contrato ni un consejo legal. Los datos no salen de este navegador.</p>
+  <p><a href="https://brujula-guias.netlify.app/">Brújula</a> · otras guías ya publicadas.</p>
+</footer>
+<script>
+const KEY = "reparte-v1";
+const empty = () => ({ people: [], expenses: [], chores: [], shop: [] });
+let state = load();
+function load() {
+  try { return Object.assign(empty(), JSON.parse(localStorage.getItem(KEY) || "{}")); }
+  catch { return empty(); }
+}
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); render(); }
+function money(n) { return n.toLocaleString("es-ES", { style: "currency", currency: "EUR" }); }
+function uid() { return Math.random().toString(36).slice(2, 9); }
+function parseEuro(s) {
+  const n = Number(String(s).replace(/\s/g, "").replace(",", "."));
+  return Number.isFinite(n) ? Math.round(n * 100) / 100 : NaN;
+}
+
+document.querySelectorAll("nav button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach(b => b.setAttribute("aria-selected", "false"));
+    document.querySelectorAll("main section").forEach(s => s.classList.remove("on"));
+    btn.setAttribute("aria-selected", "true");
+    document.getElementById(btn.dataset.tab).classList.add("on");
+  });
+});
+
+document.getElementById("add-person").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("person").value.trim();
+  if (!name || state.people.some(p => p.name.toLowerCase() === name.toLowerCase())) return;
+  state.people.push({ id: uid(), name });
+  e.target.reset();
+  save();
+});
+document.getElementById("add-expense").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!state.people.length) return;
+  const amount = parseEuro(document.getElementById("amount").value);
+  if (!(amount > 0)) return;
+  state.expenses.unshift({
+    id: uid(),
+    concept: document.getElementById("concept").value.trim(),
+    amount,
+    payer: document.getElementById("payer").value,
+    at: Date.now()
+  });
+  e.target.reset();
+  save();
+});
+document.getElementById("add-chore").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!state.people.length) return;
+  state.chores.push({ id: uid(), name: document.getElementById("chore").value.trim(), index: 0 });
+  e.target.reset();
+  save();
+});
+document.getElementById("add-item").addEventListener("submit", (e) => {
+  e.preventDefault();
+  state.shop.push({ id: uid(), name: document.getElementById("item").value.trim(), done: false });
+  e.target.reset();
+  save();
+});
+document.getElementById("clear-done").addEventListener("click", () => {
+  state.shop = state.shop.filter(i => !i.done);
+  save();
+});
+
+function nets() {
+  const bal = Object.fromEntries(state.people.map(p => [p.id, 0]));
+  for (const exp of state.expenses) {
+    const n = state.people.length;
+    if (!n || !(exp.payer in bal)) continue;
+    bal[exp.payer] += exp.amount;
+    const share = exp.amount / n;
+    for (const p of state.people) bal[p.id] -= share;
+  }
+  return bal;
+}
+function settlements(bal) {
+  const debtors = [];
+  const creditors = [];
+  for (const [id, v] of Object.entries(bal)) {
+    const cents = Math.round(v * 100);
+    if (cents > 0) creditors.push({ id, cents });
+    if (cents < 0) debtors.push({ id, cents: -cents });
+  }
+  debtors.sort((a, b) => b.cents - a.cents);
+  creditors.sort((a, b) => b.cents - a.cents);
+  const moves = [];
+  let i = 0, j = 0;
+  while (i < debtors.length && j < creditors.length) {
+    const pay = Math.min(debtors[i].cents, creditors[j].cents);
+    if (pay > 0) moves.push({ from: debtors[i].id, to: creditors[j].id, amount: pay / 100 });
+    debtors[i].cents -= pay;
+    creditors[j].cents -= pay;
+    if (debtors[i].cents === 0) i++;
+    if (creditors[j].cents === 0) j++;
+  }
+  return moves;
+}
+function nameOf(id) { return (state.people.find(p => p.id === id) || {}).name || "—"; }
+
+function render() {
+  const people = document.getElementById("people");
+  people.innerHTML = state.people.map(p =>
+    `<span class="chip">${p.name} <button type="button" data-del="${p.id}" aria-label="Quitar">×</button></span>`
+  ).join("") || `<span class="mute">Añade al menos dos personas.</span>`;
+  people.querySelectorAll("[data-del]").forEach(btn => btn.addEventListener("click", () => {
+    const id = btn.dataset.del;
+    state.people = state.people.filter(p => p.id !== id);
+    state.expenses = state.expenses.filter(e => e.payer !== id);
+    save();
+  }));
+  const payer = document.getElementById("payer");
+  payer.innerHTML = state.people.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+
+  const bal = nets();
+  document.getElementById("balances").innerHTML = state.people.map(p => {
+    const v = bal[p.id] || 0;
+    const cls = v > 0.004 ? "pos" : v < -0.004 ? "neg" : "";
+    const word = v > 0.004 ? "le deben" : v < -0.004 ? "debe" : "en paz";
+    return `<div class="bal"><span>${p.name}</span><span class="${cls}">${word} ${money(Math.abs(v))}</span></div>`;
+  }).join("") || `<p class="mute">Sin personas todavía.</p>`;
+  const moves = settlements(bal);
+  document.getElementById("settle").innerHTML = moves.length
+    ? moves.map(m => `<div class="bal"><span>${nameOf(m.from)} paga a ${nameOf(m.to)}</span><strong>${money(m.amount)}</strong></div>`).join("")
+    : `<p class="mute">Nadie debe nada, o falta apuntar un gasto.</p>`;
+
+  document.getElementById("expenses").innerHTML = state.expenses.slice(0, 12).map(e =>
+    `<li class="item"><span><strong>${e.concept}</strong><br><span class="mute">${nameOf(e.payer)} · ${new Date(e.at).toLocaleDateString("es-ES")}</span></span><span>${money(e.amount)} <button type="button" data-x="${e.id}" class="ghost">×</button></span></li>`
+  ).join("") || `<li class="mute">Todavía no hay gastos.</li>`;
+  document.getElementById("expenses").querySelectorAll("[data-x]").forEach(btn => btn.addEventListener("click", () => {
+    state.expenses = state.expenses.filter(e => e.id !== btn.dataset.x);
+    save();
+  }));
+
+  document.getElementById("chores").innerHTML = state.chores.map(c => {
+    const who = state.people.length ? state.people[c.index % state.people.length].name : "añade personas";
+    return `<li class="item"><span><strong>${c.name}</strong><br><span class="mute">Turno de ${who}</span></span><button type="button" data-done="${c.id}" class="primary">Hecho</button></li>`;
+  }).join("") || `<li class="mute">Añade una tarea. Hace falta gente en Gastos.</li>`;
+  document.getElementById("chores").querySelectorAll("[data-done]").forEach(btn => btn.addEventListener("click", () => {
+    const c = state.chores.find(x => x.id === btn.dataset.done);
+    if (c && state.people.length) c.index = (c.index + 1) % state.people.length;
+    save();
+  }));
+
+  document.getElementById("shop").innerHTML = state.shop.map(i =>
+    `<li class="item"><label class="checkline"><input type="checkbox" data-shop="${i.id}" ${i.done ? "checked" : ""}> <span>${i.name}</span></label></li>`
+  ).join("") || `<li class="mute">La lista está vacía.</li>`;
+  document.getElementById("shop").querySelectorAll("[data-shop]").forEach(box => box.addEventListener("change", () => {
+    const item = state.shop.find(x => x.id === box.dataset.shop);
+    if (item) item.done = box.checked;
+    save();
+  }));
+}
+render();
+</script>
+</body>
+</html>
