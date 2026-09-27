@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Escandallo de un plato: merma, coste por ración y precio de carta. En el móvil, sin cuenta. No es un TPV ni una factura.">
+<title>Escandallo — coste por ración</title>
+<style>
+  :root {
+    --ink: #1b241c;
+    --mute: #5c675c;
+    --bg: #e7efe4;
+    --card: #f7fbf4;
+    --line: #c9d5c6;
+    --herb: #1f6a45;
+    --herb-ink: #f4fff8;
+    --bad: #8d2f2a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, sans-serif;
+    line-height: 1.4;
+  }
+  header, .rail, footer, .card { width: min(860px, calc(100% - 24px)); margin: 0 auto; }
+  header { padding: 22px 0 8px; }
+  .mark {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--herb);
+    margin: 0;
+  }
+  h1 { font-size: 38px; line-height: 0.95; margin: 4px 0 8px; font-family: Georgia, serif; font-weight: 650; }
+  .lede { margin: 0; color: var(--mute); max-width: 66ch; }
+  .card {
+    margin-top: 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .grid { display: grid; gap: 10px; grid-template-columns: 1.4fr 0.6fr 0.7fr 0.7fr; }
+  label { display: block; font-size: 12px; color: var(--mute); margin-bottom: 3px; }
+  input {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .wrap { overflow-x: auto; margin-top: 12px; }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  th { text-align: left; font-size: 12px; color: var(--mute); font-weight: 600; }
+  td { padding: 4px 6px 4px 0; vertical-align: top; }
+  td.num { width: 110px; }
+  td.act { width: 36px; }
+  tr.bad input { border-color: var(--bad); }
+  .totals {
+    margin-top: 14px;
+    display: grid;
+    gap: 4px;
+    justify-content: end;
+    font-variant-numeric: tabular-nums;
+  }
+  .totals div { display: flex; justify-content: space-between; gap: 28px; min-width: 260px; }
+  .totals .due { font-family: Georgia, serif; font-size: 22px; margin-top: 4px; }
+  .rowbtns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button, .linkish {
+    font: inherit;
+    border-radius: 999px;
+    border: 0;
+    padding: 10px 14px;
+    background: var(--herb);
+    color: var(--herb-ink);
+    text-decoration: none;
+    display: inline-block;
+  }
+  button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button.warn { background: transparent; color: var(--bad); border: 1px solid var(--bad); }
+  .sub { margin: 8px 0 0; color: var(--mute); font-size: 13px; }
+  .rail p, footer { color: var(--mute); font-size: 14px; }
+  footer { padding: 8px 0 28px; }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    h1 { font-size: 32px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .noprint { display: none !important; }
+    .card { border: 0; width: auto; }
+    header, footer { width: auto; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <p class="mark">Cocina</p>
+  <h1>Escandallo</h1>
+  <p class="lede">Coste de un plato con merma y precio por ración. La cantidad y el precio van en la misma unidad. Sin cuenta. No es un TPV, ni una ficha de alérgenos, ni una factura.</p>
+</header>
+<main class="card">
+  <div class="grid">
+    <div style="grid-column: 1 / -1">
+      <label for="dish">Plato</label>
+      <input id="dish" autocomplete="off">
+    </div>
+    <div>
+      <label for="portions">Raciones</label>
+      <input id="portions" inputmode="decimal" value="1">
+    </div>
+    <div>
+      <label for="target">Food cost objetivo %</label>
+      <input id="target" inputmode="decimal" value="30">
+    </div>
+    <div>
+      <label for="menu">PVP de carta, si ya lo tienes</label>
+      <input id="menu" inputmode="decimal" autocomplete="off">
+    </div>
+  </div>
+  <p class="sub">El objetivo solo sirve para proponer un PVP. No es una norma. El PVP de hostelería suele llevar el IVA incluido; esta hoja no calcula impuestos.</p>
+
+  <div class="wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ingrediente</th>
+          <th>Cantidad neta</th>
+          <th>Merma %</th>
+          <th>Precio</th>
+          <th>Coste</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="lines"></tbody>
+    </table>
+  </div>
+  <div class="rowbtns noprint">
+    <button type="button" id="add-line" class="ghost">Añadir ingrediente</button>
+  </div>
+  <p class="sub">La merma es lo que se tira al limpiar. 200 g netos al 20% salen de 250 g comprados. Si la merma es 100 o más, la línea no cuenta.</p>
+
+  <div class="totals" aria-live="polite">
+    <div><span>Coste del plato</span><strong id="t-batch">0,00 €</strong></div>
+    <div><span>Coste por ración</span><strong id="t-each">0,00 €</strong></div>
+    <div class="due"><span>PVP sugerido</span><strong id="t-ask">—</strong></div>
+    <div><span>Food cost del PVP</span><strong id="t-pct">—</strong></div>
+  </div>
+</main>
+
+<section class="rail noprint">
+  <div class="rowbtns">
+    <button type="button" id="print">Imprimir o PDF</button>
+    <button type="button" class="warn" id="wipe">Borrar este escandallo</button>
+  </div>
+  <p>Los datos no salen de este navegador. Si borras los datos del sitio, se pierden.</p>
+  <p>Esto no lleva el almacén ni factura. Si el negocio factura como autónomo, un programa de facturación es Quipu.</p>
+  <p><a class="linkish" href="https://getquipu.com/?via=dan" rel="noopener noreferrer" target="_blank">Ver Quipu</a></p>
+  <p>Enlace de afiliado. Si contratas un plan de pago, podemos llevar una comisión, sin coste extra para ti. Condiciones públicas del programa: 30% del importe neto pagado, hasta 12 meses en plan mensual o un solo pago en plan anual.</p>
+  <p>Canal: <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram Brújula</a>.</p>
+</section>
+<footer class="noprint">Brújula · Peluzzza · herramienta orientativa · no sustituye asesoría</footer>
+
+<script>
+(function () {
+  var KEY = "escandallo-v1";
+  var euro = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
+  var pct = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  var linesEl = document.getElementById("lines");
+
+  function parseAmount(raw) {
+    var s = String(raw || "").trim().replace(/\s/g, "");
+    if (!s) return 0;
+    if (s.indexOf(",") !== -1) s = s.replace(/\./g, "").replace(",", ".");
+    else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, "");
+    var n = Number(s);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function round2(n) {
+    return Math.round((n + Number.EPSILON) * 100) / 100;
+  }
+
+  function lineCost(qty, mermaPct, price) {
+    var empty = !(qty > 0) && !(price > 0) && !(mermaPct > 0);
+    if (empty) return { cost: 0, skip: true, bad: false };
+    if (!(qty > 0) || price < 0 || mermaPct < 0 || mermaPct >= 100) {
+      return { cost: 0, skip: true, bad: true };
+    }
+    var yieldFrac = 1 - mermaPct / 100;
+    return { cost: round2((qty / yieldFrac) * price), skip: false, bad: false };
+  }
+
+  function quote(rows, portions, targetPct, menuPrice) {
+    var cost = 0;
+    var bad = 0;
+    rows.forEach(function (row) {
+      var line = lineCost(row.qty, row.merma, row.price);
+      if (line.bad) bad += 1;
+      if (!line.skip) cost += line.cost;
+    });
+    cost = round2(cost);
+    var each = portions > 0 ? round2(cost / portions) : null;
+    var suggested = (each != null && targetPct > 0 && targetPct < 100)
+      ? round2(each / (targetPct / 100))
+      : null;
+    var foodPct = (each != null && menuPrice > 0) ? (each / menuPrice) * 100 : null;
+    return { cost: cost, each: each, suggested: suggested, foodPct: foodPct, bad: bad };
+  }
+
+  function readRows() {
+    return Array.prototype.map.call(linesEl.querySelectorAll("tr"), function (tr) {
+      return {
+        name: tr.querySelector(".name").value,
+        qty: parseAmount(tr.querySelector(".qty").value),
+        merma: parseAmount(tr.querySelector(".merma").value),
+        price: parseAmount(tr.querySelector(".price").value)
+      };
+    });
+  }
+
+  function money(n) {
+    return n == null ? "—" : euro.format(n);
+  }
+
+  function render() {
+    var rows = readRows();
+    var result = quote(
+      rows,
+      parseAmount(document.getElementById("portions").value),
+      parseAmount(document.getElementById("target").value),
+      parseAmount(document.getElementById("menu").value)
+    );
+    Array.prototype.forEach.call(linesEl.querySelectorAll("tr"), function (tr, i) {
+      var line = lineCost(rows[i].qty, rows[i].merma, rows[i].price);
+      tr.classList.toggle("bad", line.bad);
+      tr.querySelector(".cost").textContent = line.skip ? "—" : euro.format(line.cost);
+    });
+    document.getElementById("t-batch").textContent = euro.format(result.cost);
+    document.getElementById("t-each").textContent = money(result.each);
+    document.getElementById("t-ask").textContent = money(result.suggested);
+    document.getElementById("t-pct").textContent = result.foodPct == null ? "—" : pct.format(result.foodPct) + " %";
+  }
+
+  function payload() {
+    return {
+      dish: document.getElementById("dish").value,
+      portions: document.getElementById("portions").value,
+      target: document.getElementById("target").value,
+      menu: document.getElementById("menu").value,
+      lines: Array.prototype.map.call(linesEl.querySelectorAll("tr"), function (tr) {
+        return {
+          name: tr.querySelector(".name").value,
+          qty: tr.querySelector(".qty").value,
+          merma: tr.querySelector(".merma").value,
+          price: tr.querySelector(".price").value
+        };
+      })
+    };
+  }
+
+  function persist() {
+    render();
+    try { localStorage.setItem(KEY, JSON.stringify(payload())); } catch (e) {}
+  }
+
+  function addLine(line) {
+    if (linesEl.children.length >= 40) return;
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td><input class="name" aria-label="Ingrediente"></td>' +
+      '<td class="num"><input class="qty" inputmode="decimal" aria-label="Cantidad neta"></td>' +
+      '<td class="num"><input class="merma" inputmode="decimal" aria-label="Merma por ciento"></td>' +
+      '<td class="num"><input class="price" inputmode="decimal" aria-label="Precio por unidad"></td>' +
+      '<td class="num cost">—</td>' +
+      '<td class="act noprint"><button type="button" class="ghost" aria-label="Quitar ingrediente">×</button></td>';
+    line = line || {};
+    tr.querySelector(".name").value = line.name || "";
+    tr.querySelector(".qty").value = line.qty || "";
+    tr.querySelector(".merma").value = line.merma || "";
+    tr.querySelector(".price").value = line.price || "";
+    tr.querySelector("button").addEventListener("click", function () {
+      if (linesEl.children.length === 1) {
+        tr.querySelector(".name").value = "";
+        tr.querySelector(".qty").value = "";
+        tr.querySelector(".merma").value = "";
+        tr.querySelector(".price").value = "";
+      } else {
+        tr.remove();
+      }
+      persist();
+    });
+    Array.prototype.forEach.call(tr.querySelectorAll("input"), function (input) {
+      input.addEventListener("input", persist);
+    });
+    linesEl.appendChild(tr);
+  }
+
+  function fill(data) {
+    data = data || {};
+    document.getElementById("dish").value = data.dish || "";
+    document.getElementById("portions").value = data.portions || "1";
+    document.getElementById("target").value = data.target || "30";
+    document.getElementById("menu").value = data.menu || "";
+    linesEl.innerHTML = "";
+    var lines = data.lines && data.lines.length ? data.lines : [{}, {}, {}];
+    lines.forEach(addLine);
+    render();
+  }
+
+  ["dish", "portions", "target", "menu"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", persist);
+  });
+  document.getElementById("add-line").addEventListener("click", function () {
+    addLine();
+    persist();
+  });
+  document.getElementById("print").addEventListener("click", function () { window.print(); });
+  document.getElementById("wipe").addEventListener("click", function () {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    fill({});
+  });
+
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { saved = null; }
+  fill(saved || {});
+})();
+</script>
+</body>
+</html>
