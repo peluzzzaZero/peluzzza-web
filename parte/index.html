@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Parte de trabajo para taller, fontanería, electricidad o reforma. Horas, materiales e IVA en el móvil. Sin cuenta. Se imprime. No es una factura.">
+<title>Parte — parte de trabajo</title>
+<style>
+  :root {
+    --ink: #1c1914;
+    --mute: #5e584e;
+    --paper: #d7d0c3;
+    --sheet: #fbf7ef;
+    --line: #d9d0c2;
+    --stripe: #8f2d2d;
+    --btn: #243026;
+    --btn-ink: #f6f3ea;
+    --bad: #8f2d2d;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: system-ui, sans-serif;
+    line-height: 1.35;
+  }
+  header, .rail, footer { width: min(820px, calc(100% - 24px)); margin: 0 auto; }
+  header { padding: 22px 0 8px; }
+  .mark {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--stripe);
+    margin: 0;
+  }
+  h1 { font-size: 40px; line-height: 0.95; margin: 4px 0 8px; font-family: Georgia, serif; font-weight: 650; }
+  .lede { margin: 0; color: var(--mute); max-width: 62ch; }
+  .sheet {
+    width: min(820px, calc(100% - 24px));
+    margin: 16px auto;
+    background: var(--sheet);
+    border: 1px solid #c9bfae;
+    border-left: 8px solid var(--stripe);
+    padding: 18px 16px 20px;
+  }
+  .sheet h2 {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    margin: 0 0 2px;
+  }
+  .sub { margin: 0 0 12px; color: var(--mute); font-size: 13px; }
+  .grid { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+  .grid .wide { grid-column: 1 / -1; }
+  label { display: block; font-size: 12px; color: var(--mute); margin-bottom: 3px; }
+  input, select, textarea {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  textarea { min-height: 72px; resize: vertical; }
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  th { text-align: left; font-size: 12px; color: var(--mute); font-weight: 600; }
+  td { padding: 4px 4px 4px 0; vertical-align: top; }
+  td.num { width: 88px; }
+  td.act { width: 36px; }
+  .totals {
+    margin-top: 12px;
+    display: grid;
+    gap: 4px;
+    justify-content: end;
+    font-variant-numeric: tabular-nums;
+  }
+  .totals div { display: flex; justify-content: space-between; gap: 28px; min-width: 220px; }
+  .totals .due { font-family: Georgia, serif; font-size: 22px; margin-top: 4px; }
+  .signs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  canvas {
+    width: 100%;
+    height: 110px;
+    background: #fff;
+    border: 1px dashed #c9bfae;
+    border-radius: 8px;
+    touch-action: none;
+  }
+  .rowbtns, .signs .mini { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  button, .linkish {
+    font: inherit;
+    border-radius: 999px;
+    border: 1px solid var(--btn);
+    background: var(--btn);
+    color: var(--btn-ink);
+    padding: 8px 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  button.ghost, .linkish.ghost { background: transparent; color: var(--ink); }
+  button.warn { background: transparent; color: var(--bad); border-color: var(--bad); }
+  .rail { padding: 4px 0 18px; }
+  .rail p { color: var(--mute); }
+  footer { padding: 0 0 28px; color: var(--mute); font-size: 13px; }
+  @media (max-width: 640px) {
+    .grid, .signs { grid-template-columns: 1fr; }
+    h1 { font-size: 34px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .noprint { display: none !important; }
+    .sheet { border: none; margin: 0; width: auto; padding: 0; }
+    input, select, textarea { border: none; padding: 0; background: transparent; }
+    canvas { border: 1px solid #bbb; }
+  }
+</style>
+</head>
+<body>
+<header class="noprint">
+  <p class="mark">Brújula · Peluzzza</p>
+  <h1>Parte</h1>
+  <p class="lede">Un parte de trabajo para el oficio, en el móvil. Horas, materiales, desplazamiento e IVA. Sin cuenta: se queda en este navegador. Se imprime o se guarda en PDF. No es una factura.</p>
+</header>
+
+<main class="sheet" id="sheet">
+  <h2>Parte de trabajo</h2>
+  <p class="sub" id="oficio-label">Oficio</p>
+  <div class="grid">
+    <div>
+      <label for="oficio">Oficio</label>
+      <select id="oficio">
+        <option>Taller</option>
+        <option>Fontanería</option>
+        <option>Electricidad</option>
+        <option>Reforma</option>
+        <option>Climatización</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div>
+      <label for="numero">Nº de parte</label>
+      <input id="numero" inputmode="text" autocomplete="off">
+    </div>
+    <div>
+      <label for="fecha">Fecha</label>
+      <input id="fecha" type="date">
+    </div>
+    <div>
+      <label for="pro-name">Profesional</label>
+      <input id="pro-name" autocomplete="organization">
+    </div>
+    <div>
+      <label for="pro-nif">NIF (opcional)</label>
+      <input id="pro-nif" autocomplete="off">
+    </div>
+    <div>
+      <label for="pro-phone">Teléfono</label>
+      <input id="pro-phone" inputmode="tel" autocomplete="tel">
+    </div>
+    <div>
+      <label for="cliente">Cliente</label>
+      <input id="cliente" autocomplete="name">
+    </div>
+    <div class="wide">
+      <label for="direccion">Dirección del trabajo</label>
+      <input id="direccion" autocomplete="street-address">
+    </div>
+    <div class="wide">
+      <label for="trabajo">Qué se hizo</label>
+      <textarea id="trabajo"></textarea>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Concepto</th>
+        <th>Cant.</th>
+        <th>Precio</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="lines"></tbody>
+  </table>
+  <div class="rowbtns noprint">
+    <button type="button" id="add-line" class="ghost">Añadir línea</button>
+  </div>
+
+  <div class="grid" style="margin-top:12px">
+    <div>
+      <label for="iva">IVA</label>
+      <select id="iva">
+        <option value="0.21" selected>21%</option>
+        <option value="0.10">10%</option>
+        <option value="0">0%</option>
+      </select>
+    </div>
+    <div>
+      <label for="irpf">Retención IRPF</label>
+      <select id="irpf">
+        <option value="0" selected>Sin retención</option>
+        <option value="0.15">15% (empresa)</option>
+        <option value="0.07">7% (autónomo nuevo)</option>
+      </select>
+    </div>
+  </div>
+  <p class="sub">La retención solo aplica si el cliente es una empresa y te retiene al pagar. El total es orientativo.</p>
+
+  <div class="totals" aria-live="polite">
+    <div><span>Base</span><strong id="t-base">0,00 €</strong></div>
+    <div><span>IVA</span><strong id="t-iva">0,00 €</strong></div>
+    <div><span>Retención</span><strong id="t-irpf">0,00 €</strong></div>
+    <div class="due"><span>A cobrar</span><strong id="t-due">0,00 €</strong></div>
+  </div>
+
+  <div style="margin-top:12px">
+    <label for="notas">Notas</label>
+    <textarea id="notas"></textarea>
+  </div>
+
+  <div class="signs">
+    <div>
+      <label>Firma del profesional</label>
+      <canvas id="sig-pro" width="600" height="220"></canvas>
+      <div class="mini noprint"><button type="button" class="ghost" id="clear-pro">Borrar firma</button></div>
+    </div>
+    <div>
+      <label>Firma del cliente</label>
+      <canvas id="sig-cli" width="600" height="220"></canvas>
+      <div class="mini noprint"><button type="button" class="ghost" id="clear-cli">Borrar firma</button></div>
+    </div>
+  </div>
+</main>
+
+<section class="rail noprint">
+  <div class="rowbtns">
+    <button type="button" id="print">Imprimir o PDF</button>
+    <button type="button" class="warn" id="wipe">Borrar este parte</button>
+  </div>
+  <p>Los datos y las firmas no salen de este navegador. Si borras los datos del sitio, se pierden.</p>
+  <p>Esto no es una factura ni un presupuesto cerrado. No sustituye asesoría fiscal. Cuando el trabajo esté aceptado y toque facturar, un programa de facturación para autónomos es Quipu.</p>
+  <p><a class="linkish" href="https://getquipu.com/?via=dan" rel="noopener noreferrer" target="_blank">Ver Quipu</a></p>
+  <p>Enlace de afiliado. Si contratas un plan de pago, podemos llevar una comisión, sin coste extra para ti. Condiciones públicas del programa: 30% del importe neto pagado, hasta 12 meses en plan mensual o un solo pago en plan anual.</p>
+  <p>Canal: <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram Brújula</a>.</p>
+</section>
+<footer class="noprint">Brújula · Peluzzza · herramienta orientativa · no sustituye asesoría</footer>
+
+<script>
+(function () {
+  var KEY = "parte-oficio-v1";
+  var euro = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
+  var linesEl = document.getElementById("lines");
+  var fields = ["oficio","numero","fecha","pro-name","pro-nif","pro-phone","cliente","direccion","trabajo","iva","irpf","notas"];
+
+  function parseAmount(raw) {
+    var s = String(raw || "").trim().replace(/\s/g, "");
+    if (!s) return 0;
+    if (s.indexOf(",") !== -1) s = s.replace(/\./g, "").replace(",", ".");
+    else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, "");
+    var n = Number(s);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function round2(n) {
+    return Math.round((n + Number.EPSILON) * 100) / 100;
+  }
+
+  function compute(rows, ivaRate, irpfRate) {
+    var base = 0;
+    rows.forEach(function (row) { base += row.qty * row.price; });
+    base = round2(base);
+    var iva = round2(base * ivaRate);
+    var irpf = round2(base * irpfRate);
+    var due = round2(base + iva - irpf);
+    return { base: base, iva: iva, irpf: irpf, due: due };
+  }
+
+  function readRows() {
+    return Array.prototype.map.call(linesEl.querySelectorAll("tr"), function (tr) {
+      return {
+        concept: tr.querySelector(".concept").value,
+        qty: parseAmount(tr.querySelector(".qty").value),
+        price: parseAmount(tr.querySelector(".price").value)
+      };
+    });
+  }
+
+  function renderTotals() {
+    var t = compute(
+      readRows(),
+      parseAmount(document.getElementById("iva").value),
+      parseAmount(document.getElementById("irpf").value)
+    );
+    document.getElementById("t-base").textContent = euro.format(t.base);
+    document.getElementById("t-iva").textContent = euro.format(t.iva);
+    document.getElementById("t-irpf").textContent = euro.format(t.irpf);
+    document.getElementById("t-due").textContent = euro.format(t.due);
+    document.getElementById("oficio-label").textContent = document.getElementById("oficio").value;
+  }
+
+  function addLine(concept, qty, price) {
+    if (linesEl.children.length >= 30) return;
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td><input class="concept" aria-label="Concepto"></td>' +
+      '<td class="num"><input class="qty" inputmode="decimal" aria-label="Cantidad"></td>' +
+      '<td class="num"><input class="price" inputmode="decimal" aria-label="Precio"></td>' +
+      '<td class="act noprint"><button type="button" class="ghost" aria-label="Quitar línea">×</button></td>';
+    tr.querySelector(".concept").value = concept || "";
+    if (qty) tr.querySelector(".qty").value = String(qty).replace(".", ",");
+    if (price) tr.querySelector(".price").value = String(price).replace(".", ",");
+    tr.querySelector("button").addEventListener("click", function () {
+      if (linesEl.children.length === 1) {
+        tr.querySelector(".concept").value = "";
+        tr.querySelector(".qty").value = "";
+        tr.querySelector(".price").value = "";
+      } else {
+        tr.remove();
+      }
+      persist();
+    });
+    linesEl.appendChild(tr);
+  }
+
+  function snapshot() {
+    var data = { lines: readRows(), sigPro: document.getElementById("sig-pro").toDataURL(), sigCli: document.getElementById("sig-cli").toDataURL() };
+    fields.forEach(function (id) { data[id] = document.getElementById(id).value; });
+    return data;
+  }
+
+  function persist() {
+    renderTotals();
+    try { localStorage.setItem(KEY, JSON.stringify(snapshot())); } catch (e) {}
+  }
+
+  function wirePad(canvas, clearBtn) {
+    var ctx = canvas.getContext("2d");
+    var drawing = false;
+    function pos(ev) {
+      var r = canvas.getBoundingClientRect();
+      var src = ev.touches ? ev.touches[0] : ev;
+      return {
+        x: (src.clientX - r.left) * (canvas.width / r.width),
+        y: (src.clientY - r.top) * (canvas.height / r.height)
+      };
+    }
+    function start(ev) { drawing = true; var p = pos(ev); ctx.beginPath(); ctx.moveTo(p.x, p.y); ev.preventDefault(); }
+    function move(ev) {
+      if (!drawing) return;
+      var p = pos(ev);
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#1c1914";
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ev.preventDefault();
+    }
+    function end() { if (!drawing) return; drawing = false; persist(); }
+    canvas.addEventListener("mousedown", start);
+    canvas.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", end);
+    canvas.addEventListener("touchstart", start, { passive: false });
+    canvas.addEventListener("touchmove", move, { passive: false });
+    canvas.addEventListener("touchend", end);
+    clearBtn.addEventListener("click", function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      persist();
+    });
+    return ctx;
+  }
+
+  var ctxPro = wirePad(document.getElementById("sig-pro"), document.getElementById("clear-pro"));
+  var ctxCli = wirePad(document.getElementById("sig-cli"), document.getElementById("clear-cli"));
+
+  function loadImage(ctx, url) {
+    if (!url) return;
+    var img = new Image();
+    img.onload = function () { ctx.drawImage(img, 0, 0); };
+    img.src = url;
+  }
+
+  function restore(data) {
+    fields.forEach(function (id) {
+      if (data[id] != null) document.getElementById(id).value = data[id];
+    });
+    linesEl.innerHTML = "";
+    (data.lines || []).forEach(function (row) { addLine(row.concept, row.qty, row.price); });
+    if (!linesEl.children.length) addLine("", "", "");
+    loadImage(ctxPro, data.sigPro);
+    loadImage(ctxCli, data.sigCli);
+    renderTotals();
+  }
+
+  document.getElementById("add-line").addEventListener("click", function () { addLine("", "", ""); persist(); });
+  document.getElementById("sheet").addEventListener("input", persist);
+  document.getElementById("print").addEventListener("click", function () { persist(); window.print(); });
+  document.getElementById("wipe").addEventListener("click", function () {
+    if (!window.confirm("¿Borrar este parte de este navegador?")) return;
+    localStorage.removeItem(KEY);
+    ctxPro.clearRect(0, 0, 600, 220);
+    ctxCli.clearRect(0, 0, 600, 220);
+    fields.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (id === "iva") el.value = "0.21";
+      else if (id === "irpf") el.value = "0";
+      else if (id === "oficio") el.value = "Taller";
+      else el.value = "";
+    });
+    document.getElementById("fecha").value = new Date().toISOString().slice(0, 10);
+    linesEl.innerHTML = "";
+    addLine("", "", "");
+    persist();
+  });
+
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { saved = null; }
+  if (!document.getElementById("fecha").value) document.getElementById("fecha").value = new Date().toISOString().slice(0, 10);
+  if (saved) restore(saved);
+  else { addLine("", "", ""); renderTotals(); }
+
+  window.__parteCompute = compute;
+  window.__parteParse = parseAmount;
+})();
+</script>
+</body>
+</html>
