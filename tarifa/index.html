@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora tarifa freelance — costes + margen · Brújula</title>
+  <meta name="description" content="Calcula tu tarifa hora y día como autónomo a partir de costes fijos, RETA, gestoría, reserva IRPF, margen y horas facturables. Datos en tu dispositivo. Brújula · Peluzzza.">
+  <meta name="theme-color" content="#0b1f33">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <strong>PoC micro-app</strong> — tarifa freelance · localStorage · Holded stub + Billin rail · revisión 2026-09-26
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap inner">
+      <a class="logo" href="#">
+        <span class="mark">Brújula</span>
+        <span class="product">Tarifa freelance</span>
+      </a>
+      <nav class="nav" aria-label="Secciones">
+        <a href="#calculadora">Calculadora</a>
+        <a href="#escenarios">Escenarios</a>
+        <a href="#partners">Partners</a>
+        <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" id="calculadora">
+      <h1>¿Cuánto cobrar por hora?</h1>
+      <p class="lede">
+        Estima tu <strong>tarifa hora y día</strong> a partir de costes mensuales, cuota RETA,
+        gestoría, reserva de IRPF, margen y horas facturables. Todo queda en este navegador
+        (localStorage). Cifra <em>orientativa</em> — no es asesoramiento fiscal ni laboral.
+      </p>
+    </section>
+
+    <form class="card calc-form" id="calc-form" novalidate>
+      <h2>Costes y capacidad</h2>
+      <div class="grid">
+        <label>
+          Gastos fijos (€/mes)
+          <input id="gastos" name="gastos" type="number" min="0" step="1" value="200" required>
+        </label>
+        <label>
+          Cuota RETA (€/mes)
+          <input id="reta" name="reta" type="number" min="0" step="1" value="294" required>
+        </label>
+        <label>
+          Gestoría (€/mes)
+          <input id="gestoria" name="gestoria" type="number" min="0" step="1" value="60" required>
+        </label>
+        <label>
+          Reserva IRPF (%)
+          <input id="irpf" name="irpf" type="number" min="0" max="99" step="1" value="20" required>
+        </label>
+        <label>
+          Margen deseado (%)
+          <input id="margen" name="margen" type="number" min="0" max="500" step="1" value="30" required>
+        </label>
+        <label>
+          Horas al mes
+          <input id="horas" name="horas" type="number" min="1" step="1" value="160" required>
+        </label>
+        <label>
+          % facturables
+          <input id="pct_fact" name="pct_fact" type="number" min="1" max="100" step="1" value="70" required>
+        </label>
+        <label>
+          Días facturables / mes
+          <input id="dias" name="dias" type="number" min="1" max="31" step="1" value="20" required>
+        </label>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" id="btn-calcular">Calcular tarifa</button>
+        <button type="button" class="btn btn-ghost" id="btn-reset">Valores ejemplo</button>
+      </div>
+    </form>
+
+    <section class="card results" id="results" aria-live="polite" hidden>
+      <h2>Resultado <span class="badge">estimación orientativa</span></h2>
+      <div class="metrics">
+        <div class="metric highlight">
+          <span class="label">Tarifa hora (con margen)</span>
+          <span class="value" id="out-hora-margen">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">Tarifa hora mínima</span>
+          <span class="value" id="out-hora-min">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">Tarifa día</span>
+          <span class="value" id="out-dia">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">Ingreso mensual objetivo</span>
+          <span class="value" id="out-ingreso">—</span>
+        </div>
+      </div>
+      <div class="split" id="split">
+        <h3>Desglose mensual</h3>
+        <ul>
+          <li><span>Costes (gastos + RETA + gestoría)</span><strong id="out-costes">—</strong></li>
+          <li><span>Horas facturables</span><strong id="out-hf">—</strong></li>
+          <li><span>Reserva IRPF (sobre ingreso objetivo)</span><strong id="out-irpf-€">—</strong></li>
+          <li><span>Margen estimado</span><strong id="out-margen-€">—</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" id="escenarios">
+      <h2>Escenarios guardados</h2>
+      <p class="hint">Se guardan solo en este dispositivo (<code>brujula-tarifa-freelance</code>).</p>
+      <div class="scenario-row">
+        <label class="grow">
+          Nombre del escenario
+          <input id="scenario-name" type="text" maxlength="60" placeholder="Ej. Cliente A · 2026" autocomplete="off">
+        </label>
+        <button type="button" class="btn btn-primary" id="btn-save">Guardar</button>
+      </div>
+      <ul class="scenario-list" id="scenario-list" aria-label="Escenarios"></ul>
+      <button type="button" class="btn btn-ghost" id="btn-clear-all">Borrar todos los escenarios</button>
+    </section>
+
+    <section class="card partners" id="partners">
+      <h2>Facturación / CRM para autónomos</h2>
+      <p>
+        Cuando tengas clara tu tarifa, un software de facturación puede ayudarte a emitir
+        presupuestos y facturas. Rails de afiliado (distintos de Quipu / guías fiscales):
+        stub <strong>Holded</strong> (sin activar) y rail nuevo <strong>Billin</strong>
+        (programa público de afiliación; enlace de tracking pendiente de activar).
+      </p>
+      <div class="partner-ctas">
+        <a class="btn btn-accent" id="cta-holded" href="#afiliado-holded-pendiente">
+          Ver Holded (enlace pendiente de activar)
+        </a>
+        <a class="btn btn-accent" id="cta-billin" href="#afiliado-billin-pendiente">
+          Ver Billin (enlace pendiente de activar)
+        </a>
+      </div>
+      <p class="disclosure">
+        Enlaces de afiliado: si contratas un plan de pago, Brújula puede percibir una comisión
+        sin coste adicional para ti. Cifra orientativa, no es asesoramiento fiscal ni laboral.
+        Programa Billin: <a href="https://www.billin.net/afiliacion/" rel="noopener noreferrer" target="_blank">billin.net/afiliacion</a>
+        (página pública del programa; el CTA de arriba es stub hasta activar tracking).
+      </p>
+      <p>
+        ¿Dudas de autónomos? Únete al canal:
+        <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram Brújula</a>.
+      </p>
+    </section>
+
+    <p class="disclaimer">
+      <strong>Aviso:</strong> herramienta orientativa. No sustituye asesoría fiscal, laboral ni
+      contable. La cuota RETA, retenciones e IRPF dependen de tu tramo y situación; verifica
+      siempre con tu gestoría o en fuentes oficiales.
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    Brújula · Peluzzza · información orientativa · no sustituye asesoría
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+/* Brújula design tokens — European fintech × editorial hybrid */
+:root {
+  /* Surfaces */
+  --bj-ink: #0b1f33;
+  --bj-ink-soft: #16324a;
+  --bj-ink-muted: #3d5568;
+  --bj-paper: #faf7f2;
+  --bj-paper-deep: #f1ebe3;
+  --bj-surface: #ffffff;
+  --bj-surface-elevated: #ffffff;
+
+  /* Accent — refined teal */
+  --bj-accent: #0f766e;
+  --bj-accent-hover: #0d9488;
+  --bj-accent-soft: #e6f5f3;
+  --bj-accent-ink: #0b4f4a;
+
+  /* Semantic */
+  --bj-warn: #9a6700;
+  --bj-warn-bg: #fff8e8;
+  --bj-warn-border: #f0d78c;
+  --bj-info: #0a5c8a;
+  --bj-info-soft: #e8f3fa;
+  --bj-danger-soft: #fdeeee;
+  --bj-border: #e4ddd3;
+  --bj-border-strong: #d0c7ba;
+  --bj-link: #0a5c8a;
+  --bj-link-hover: #084a6e;
+
+  /* Type — fluid */
+  --bj-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --bj-font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --bj-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --bj-fs-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.8125rem);
+  --bj-fs-sm: clamp(0.875rem, 0.82rem + 0.25vw, 0.9375rem);
+  --bj-fs-base: clamp(1.05rem, 0.98rem + 0.35vw, 1.125rem);
+  --bj-fs-lg: clamp(1.15rem, 1.05rem + 0.45vw, 1.25rem);
+  --bj-fs-xl: clamp(1.35rem, 1.15rem + 0.7vw, 1.6rem);
+  --bj-fs-2xl: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+  --bj-fs-3xl: clamp(2.1rem, 1.6rem + 1.8vw, 3rem);
+
+  --bj-lh-tight: 1.2;
+  --bj-lh-snug: 1.35;
+  --bj-lh-base: 1.65;
+  --bj-lh-relaxed: 1.75;
+
+  --bj-tracking-tight: -0.025em;
+  --bj-tracking-display: -0.03em;
+
+  /* Spacing */
+  --bj-space-1: 0.25rem;
+  --bj-space-2: 0.5rem;
+  --bj-space-3: 0.75rem;
+  --bj-space-4: 1rem;
+  --bj-space-5: 1.5rem;
+  --bj-space-6: 2rem;
+  --bj-space-7: 2.75rem;
+  --bj-space-8: 3.5rem;
+  --bj-space-9: 5rem;
+
+  /* Layout */
+  --bj-max: 42rem;
+  --bj-wide: 58rem;
+  --bj-page: 72rem;
+  --bj-gutter: clamp(1rem, 4vw, 1.75rem);
+
+  /* Chrome */
+  --bj-radius-sm: 8px;
+  --bj-radius: 14px;
+  --bj-radius-lg: 20px;
+  --bj-shadow: 0 1px 2px rgba(11, 31, 51, 0.04), 0 10px 28px rgba(11, 31, 51, 0.06);
+  --bj-shadow-lg: 0 2px 4px rgba(11, 31, 51, 0.05), 0 18px 40px rgba(11, 31, 51, 0.1);
+  --bj-header-h: 3.75rem;
+  --bj-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mudanza Coruña · checklist interactiva · Brújula</title>
+  <meta name="description" content="Checklist interactiva para mudarte en A Coruña: suministros, ORA, packing, empadronamiento (enlace) y más. Progreso local · Brújula · Peluzzza.">
+  <meta name="theme-color" content="#0b1f33">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <strong>PoC local</strong> — checklist mudanza A Coruña · localStorage · no es el Concello ni el 010
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap inner">
+      <a class="logo" href="#">
+        <span class="mark">Brújula</span>
+        <span class="product">Mudanza Coruña</span>
+      </a>
+      <nav class="nav" aria-label="Secciones">
+        <a href="#checklist">Checklist</a>
+        <a href="#progreso">Progreso</a>
+        <a href="#partners">Partners</a>
+        <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="mudanza-hero" id="progreso">
+      <h1>Checklist de mudanza en A Coruña</h1>
+      <p class="lede">
+        Herramienta <strong>interactiva</strong> para organizar tu mudanza (suministros, parking,
+        packing y cambio de domicilio). Los ticks se guardan en este dispositivo.
+        Complementa sede/010 — <em>no</em> es un portal oficial del Concello.
+      </p>
+
+      <div class="progress-block" aria-live="polite">
+        <div class="progress-meta">
+          <span id="progress-label">0 de 0 hechas</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="tool-actions">
+        <button type="button" class="btn btn-ghost" id="btn-csv">Exportar CSV</button>
+        <button type="button" class="btn btn-ghost" id="btn-print">Imprimir</button>
+        <button type="button" class="btn btn-ghost" id="btn-clear">Borrar progreso local</button>
+      </div>
+    </section>
+
+    <section class="checklist-root" id="checklist" aria-label="Checklist por fases">
+      <!-- filled by app.js -->
+    </section>
+
+    <section class="card-block tip-block">
+      <h2>Enlaces oficiales (externos)</h2>
+      <ul class="official-links">
+        <li><a href="https://sede.coruna.gal/sede/es/tramites-y-servicios-electronicos/cita-previa?argIdioma=es" rel="noopener noreferrer" target="_blank">Cita previa · sede.coruna.gal</a></li>
+        <li><a href="https://www.coruna.gal/" rel="noopener noreferrer" target="_blank">Concello de A Coruña</a> · teléfono 010</li>
+        <li><a href="/empadronamiento/" rel="noopener noreferrer" target="_blank">Guía empadronamiento (Brújula Clarity)</a> — complementaria, no la rehacemos aquí</li>
+      </ul>
+    </section>
+
+    <section class="partners-stub" id="partners">
+      <h2>Partners y lista de espera</h2>
+      <p>
+        Esta PoC es <strong>gratis y local</strong>. Stub de afiliado <strong>trastero / almacenamiento</strong>
+        (sin activar). Lista de espera para <strong>empresas de mudanza en Coruña</strong>
+        (lead local; sin compromiso).
+      </p>
+
+      <div class="partner-ctas">
+        <a class="btn btn-primary" id="cta-trastero" href="#afiliado-trastero-pendiente">
+          Ver trasteros (enlace pendiente de activar)
+        </a>
+      </div>
+      <p class="disclosure">
+        Enlace de afiliado: si contratas un plan de pago vía un partner activado, Brújula puede
+        percibir una comisión sin coste adicional para ti. Cifra orientativa. No es asesoramiento.
+      </p>
+
+      <div class="waitlist-card" id="waitlist">
+        <h3>Lista de espera · mudanzas locales</h3>
+        <p class="waitlist-hint">Deja tus datos en este dispositivo y escribe por Telegram cuando quieras que te pasemos a empresas locales (cuando haya volumen).</p>
+        <form id="waitlist-form" class="waitlist-form" novalidate>
+          <label>
+            Nombre
+            <input id="wl-name" name="name" type="text" maxlength="80" autocomplete="name" placeholder="Ej. Lucía" required>
+          </label>
+          <label>
+            Barrio / zona
+            <input id="wl-barrio" name="barrio" type="text" maxlength="80" placeholder="Ej. Agra do Orzán" required>
+          </label>
+          <label>
+            Fecha aproximada
+            <input id="wl-fecha" name="fecha" type="month">
+          </label>
+          <button type="submit" class="btn btn-primary">Guardar en dispositivo</button>
+        </form>
+        <p id="waitlist-status" class="waitlist-status" role="status" hidden></p>
+        <p>
+          Canal:
+          <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram Brújula</a>
+        </p>
+      </div>
+    </section>
+
+    <p class="disclaimer">
+      <strong>Aviso:</strong> herramienta orientativa de Brújula · Peluzzza.
+      <em>No</em> es el Concello de A Coruña, ni el 010, ni la sede electrónica.
+      No sustituye trámites oficiales ni asesoría. Verifica plazos y requisitos en
+      <a href="https://sede.coruna.gal/" rel="noopener noreferrer" target="_blank">sede.coruna.gal</a>
+      y fuentes oficiales. No capturamos datos personales en servidor: el progreso vive en tu navegador.
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    Brújula · Peluzzza · información orientativa · no sustituye al Concello ni al 010
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

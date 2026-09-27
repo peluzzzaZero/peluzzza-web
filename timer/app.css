@@ -1,0 +1,171 @@
+/* Registro jornada timer — Brújula PoC */
+.timer-hero {
+  text-align: center;
+  padding: var(--bj-space-7, 2.5rem) 0 var(--bj-space-5, 1.25rem);
+}
+.timer-hero h1 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin: 0 0 0.5rem;
+  color: var(--bj-ink);
+}
+.timer-hero .lede {
+  color: var(--bj-ink-muted);
+  max-width: 36rem;
+  margin: 0 auto 1.25rem;
+  line-height: 1.5;
+}
+.worker-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: end;
+  margin-bottom: 1.5rem;
+}
+.worker-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--bj-ink-muted);
+  text-align: left;
+}
+.worker-row input {
+  min-width: 14rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #d4cfc6;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: var(--bj-surface, #fff);
+  color: var(--bj-ink);
+}
+.clock-face {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.4rem, 8vw, 3.5rem);
+  font-weight: 700;
+  color: var(--bj-ink);
+  letter-spacing: 0.02em;
+  margin: 0.5rem 0 0.25rem;
+}
+.clock-sub {
+  font-size: 0.9rem;
+  color: var(--bj-ink-muted);
+  margin-bottom: 1.25rem;
+}
+.status-pill {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--bj-accent-soft, #e6f5f3);
+  color: var(--bj-accent, #0f766e);
+  margin-bottom: 1rem;
+}
+.status-pill.out {
+  background: var(--bj-paper-deep, #f1ebe3);
+  color: var(--bj-ink-muted);
+}
+.punch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.punch-actions .btn {
+  min-width: 8rem;
+  font-size: 1.05rem;
+  padding: 0.85rem 1.4rem;
+}
+.btn-in { background: var(--bj-accent, #0f766e); color: #fff; }
+.btn-in:hover { background: var(--bj-accent-hover, #0d9488); }
+.btn-out { background: var(--bj-ink, #0b1f33); color: #fff; }
+.btn-out:hover { background: var(--bj-ink-soft, #16324a); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+.card-block {
+  background: var(--bj-surface, #fff);
+  border: 1px solid #e8e2d8;
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  margin-bottom: 1.25rem;
+}
+.card-block h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.85rem;
+  color: var(--bj-ink);
+}
+.punch-list, .week-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.punch-list th, .punch-list td,
+.week-table th, .week-table td {
+  text-align: left;
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1px solid #efe9e0;
+}
+.punch-list th, .week-table th {
+  color: var(--bj-ink-muted);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.empty-hint {
+  color: var(--bj-ink-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+.partners-stub {
+  background: var(--bj-accent-soft, #e6f5f3);
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  margin: 1.5rem 0;
+}
+.partners-stub h2 { margin-top: 0; font-size: 1.05rem; }
+.partners-stub p { color: var(--bj-ink-muted); margin: 0.4rem 0; line-height: 1.5; font-size: 0.92rem; }
+.disclaimer {
+  font-size: 0.8rem;
+  color: var(--bj-ink-muted);
+  line-height: 1.45;
+  margin: 1.5rem 0;
+}
+.site-footer {
+  text-align: center;
+  padding: 1.5rem 1rem 2.5rem;
+  font-size: 0.82rem;
+  color: var(--bj-ink-muted);
+  border-top: 1px solid #ebe5db;
+  margin-top: 2rem;
+}
+.topbar .wrap { font-size: 0.85rem; }
+@media print {
+  .topbar, .site-header .nav, .punch-actions, .tool-actions,
+  .partners-stub, .worker-row, .disclaimer, #today-card { display: none !important; }
+  .clock-face, .status-pill, .clock-sub { display: none !important; }
+  body { background: #fff; }
+  .card-block { border: none; padding: 0; }
+}
+
+.partner-ctas {
+  display: flex; flex-wrap: wrap; gap: 0.65rem; margin: 0.75rem 0;
+}
+.partners-stub .disclosure {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--bj-ink-muted);
+  background: rgba(255, 248, 220, 0.7);
+  border: 1px solid #e6d9a8;
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  line-height: 1.45;
+}

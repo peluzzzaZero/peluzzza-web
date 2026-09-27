@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro jornada timer — fichaje diario local · Brújula</title>
+  <meta name="description" content="Reloj de fichaje local (entrada/salida) para registro diario de jornada. Datos en tu dispositivo. Herramienta orientativa Brújula · Peluzzza.">
+  <meta name="theme-color" content="#0b1f33">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <strong>PoC micro-app</strong> — fichaje local · localStorage · Sesame stub + Billin rail · revisión 2026-09-26
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap inner">
+      <a class="logo" href="#">
+        <span class="mark">Brújula</span>
+        <span class="product">Registro jornada timer</span>
+      </a>
+      <nav class="nav" aria-label="Secciones">
+        <a href="#reloj">Reloj</a>
+        <a href="#semana">Semana</a>
+        <a href="#partners">Partners</a>
+        <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="timer-hero" id="reloj">
+      <h1>Fichaje diario en tu dispositivo</h1>
+      <p class="lede">
+        Herramienta <strong>local</strong> de entrada/salida para apoyar el registro de jornada
+        (art. 34.9 ET). Los datos no salen de este navegador. No es un sistema certificado
+        inmodificable ni sustituye software RRHH o asesoría laboral.
+      </p>
+
+      <div class="worker-row">
+        <label>
+          Nombre / identificador
+          <input id="worker-name" type="text" autocomplete="name" placeholder="Ej. Ana García" maxlength="80">
+        </label>
+      </div>
+
+      <div id="status-pill" class="status-pill out" role="status">Fuera · sin fichaje abierto</div>
+      <div id="clock-face" class="clock-face" aria-live="polite">00:00:00</div>
+      <p id="clock-sub" class="clock-sub">Pulsa Entrada para empezar el registro de hoy</p>
+
+      <div class="punch-actions">
+        <button type="button" class="btn btn-in" id="btn-in">Entrada</button>
+        <button type="button" class="btn btn-out" id="btn-out" disabled>Salida</button>
+      </div>
+
+      <div class="tool-actions">
+        <button type="button" class="btn btn-ghost" id="btn-csv">Exportar CSV (semana)</button>
+        <button type="button" class="btn btn-ghost" id="btn-print">Imprimir semana</button>
+        <button type="button" class="btn btn-ghost" id="btn-clear">Borrar datos locales</button>
+      </div>
+    </section>
+
+    <section class="card-block" id="today-card">
+      <h2>Hoy</h2>
+      <p id="today-empty" class="empty-hint">Aún no hay fichajes hoy.</p>
+      <table class="punch-list" aria-label="Fichajes de hoy">
+        <thead><tr><th>Entrada</th><th>Salida</th><th>Duración</th></tr></thead>
+        <tbody id="today-body"></tbody>
+      </table>
+    </section>
+
+    <section class="card-block" id="semana">
+      <h2>Semana en curso <span style="font-weight:400;color:var(--bj-ink-muted);font-size:0.9rem">(Europe/Madrid)</span></h2>
+      <table class="week-table" aria-label="Resumen semanal">
+        <thead><tr><th>Día</th><th>Primera entrada</th><th>Última salida</th><th>Total</th></tr></thead>
+        <tbody id="week-body"></tbody>
+        <tfoot>
+          <tr><th colspan="3">Total semana</th><th id="week-total">—</th></tr>
+        </tfoot>
+      </table>
+    </section>
+
+    <section class="partners-stub" id="partners">
+      <h2>Partners</h2>
+      <p>
+        Esta PoC es <strong>gratis y local</strong>. Stub RRHH <strong>Sesame</strong> (sin activar).
+        Rail nuevo de facturación <strong>Billin</strong> (distinto de Quipu / Holded / Sesame;
+        programa público de afiliación; tracking pendiente de activar).
+      </p>
+      <div class="partner-ctas">
+        <a class="btn btn-primary" id="cta-billin" href="#afiliado-billin-pendiente">
+          Ver Billin (enlace pendiente de activar)
+        </a>
+      </div>
+      <p class="disclosure">
+        Enlace de afiliado: si contratas un plan de pago, Brújula puede percibir una comisión
+        sin coste adicional para ti. Cifra orientativa, no es asesoramiento fiscal ni laboral.
+        Programa: <a href="https://www.billin.net/afiliacion/" rel="noopener noreferrer" target="_blank">billin.net/afiliacion</a>.
+      </p>
+      <p>
+        ¿Dudas? Canal:
+        <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram Brújula</a>.
+      </p>
+      <p>Mientras tanto, usa CSV/impresión como apoyo. Sesame sigue sin activar (CEO→Daniel).</p>
+    </section>
+
+    <p class="disclaimer">
+      <strong>Aviso:</strong> información y herramienta orientativas. El registro de jornada exige
+      un sistema fiable e inmodificable a posteriori según la Guía del Ministerio de Trabajo;
+      este reloj en el navegador <em>no</em> cumple por sí solo ese estándar de conservación
+      certificada. Verifica en BOE, convenio y con tu asesoría. No implantamos sistemas de fichaje.
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    Brújula · Peluzzza · información orientativa · no sustituye asesoría
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

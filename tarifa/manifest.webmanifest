@@ -1,0 +1,15 @@
+{
+  "name": "Calculadora tarifa freelance — Brújula",
+  "short_name": "Tarifa freelance",
+  "description": "Calcula tu tarifa hora y día a partir de costes, RETA, margen y horas facturables. Datos en tu dispositivo.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf7f2",
+  "theme_color": "#0b1f33",
+  "lang": "es",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
