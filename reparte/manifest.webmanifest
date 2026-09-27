@@ -1,0 +1,22 @@
+{
+  "name": "Reparte",
+  "short_name": "Reparte",
+  "start_url": "/reparte/",
+  "scope": "/reparte/",
+  "display": "standalone",
+  "background_color": "#f4efe6",
+  "theme_color": "#1c1915",
+  "icons": [
+    {
+      "src": "/reparte/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/reparte/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

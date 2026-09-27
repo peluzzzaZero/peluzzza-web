@@ -83,6 +83,14 @@
   a { color: var(--accent); }
   @media (max-width: 560px) { h1 { font-size: 34px; } .grid { grid-template-columns: 1fr; } }
 </style>
+<link rel="manifest" href="/reparte/manifest.webmanifest">
+<meta name="theme-color" content="#1c1915">
+<link rel="icon" href="/reparte/icon-192.png">
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/reparte/sw.js');
+}
+</script>
 </head>
 <body>
 <header>

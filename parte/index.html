@@ -115,6 +115,14 @@
     canvas { border: 1px solid #bbb; }
   }
 </style>
+<link rel="manifest" href="/parte/manifest.webmanifest">
+<meta name="theme-color" content="#1c1915">
+<link rel="icon" href="/parte/icon-192.png">
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/parte/sw.js');
+}
+</script>
 </head>
 <body>
 <header class="noprint">
