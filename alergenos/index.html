@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Carta de alérgenos para hostelería: marca los 14 grupos del anexo II en cada plato e imprímela. Sin cuenta. No es una inspección ni un certificado.">
+<title>Carta de alérgenos</title>
+<style>
+  :root {
+    --ink: #241910;
+    --mute: #6d5c4e;
+    --bg: #f6efe4;
+    --card: #fffaf3;
+    --line: #e2d3c0;
+    --mark: #9a3d16;
+    --mark-ink: #fff7f2;
+    --bad: #8d2f2a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, sans-serif;
+    line-height: 1.4;
+  }
+  header, .rail, footer, .card { width: min(920px, calc(100% - 24px)); margin: 0 auto; }
+  header { padding: 22px 0 8px; }
+  .mark {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--mark);
+    margin: 0;
+  }
+  h1 { font-size: 38px; line-height: 0.95; margin: 4px 0 8px; font-family: Georgia, serif; font-weight: 650; }
+  .lede { margin: 0; color: var(--mute); max-width: 68ch; }
+  .card {
+    margin-top: 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  label { display: block; font-size: 12px; color: var(--mute); margin-bottom: 3px; }
+  input, select {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .meta { display: grid; gap: 10px; grid-template-columns: 1.4fr 0.7fr; }
+  .dish {
+    border-top: 1px solid var(--line);
+    margin-top: 14px;
+    padding-top: 12px;
+  }
+  .dish-head { display: grid; gap: 8px; grid-template-columns: 1.4fr 0.7fr auto; align-items: end; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip {
+    font: inherit;
+    font-size: 13px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    padding: 6px 10px;
+  }
+  .chip.on { background: var(--mark); color: var(--mark-ink); border-color: var(--mark); }
+  button, .linkish {
+    font: inherit;
+    border-radius: 999px;
+    border: 0;
+    padding: 10px 14px;
+    background: var(--mark);
+    color: var(--mark-ink);
+    text-decoration: none;
+    display: inline-block;
+  }
+  button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button.warn { background: transparent; color: var(--bad); border: 1px solid var(--bad); }
+  .rowbtns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .sub { margin: 8px 0 0; color: var(--mute); font-size: 13px; }
+  .rail p, footer { color: var(--mute); font-size: 14px; }
+  footer { padding: 8px 0 28px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 8px 0 0; padding: 0; list-style: none; font-size: 13px; }
+  .sheet { display: none; }
+  @media (max-width: 720px) {
+    .meta, .dish-head { grid-template-columns: 1fr; }
+    h1 { font-size: 32px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .noprint { display: none !important; }
+    .card, header, footer { width: auto; border: 0; }
+    .sheet { display: block; }
+    .screen { display: none !important; }
+    a { color: inherit; text-decoration: none; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th, td { border-bottom: 1px solid #ccc; padding: 3px 4px; text-align: left; vertical-align: top; }
+    th.n, td.n { text-align: center; width: 22px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <p class="mark">Hostelería</p>
+  <h1>Carta de alérgenos</h1>
+  <p class="lede">Marca, en cada plato, cuál de los 14 grupos del anexo II lleva como ingrediente. Se imprime para la sala. Sin cuenta. No calcula el coste, no es un parte y no sustituye la ficha de cocina ni una inspección.</p>
+</header>
+<main class="card">
+  <div class="meta screen">
+    <div>
+      <label for="place">Local</label>
+      <input id="place" autocomplete="organization">
+    </div>
+    <div>
+      <label for="updated">Fecha de esta carta</label>
+      <input id="updated" inputmode="numeric" autocomplete="off" placeholder="dd/mm/aaaa">
+    </div>
+  </div>
+  <p class="sub screen">Solo «contiene». No marques trazas ni lo que pueda caer de otra sartén. El anexo II tiene excepciones (jarabes, aceites refinados y un caso industrial de mostaza en los emulgentes E470a, E471 y E477). Esta hoja no las aplica.</p>
+  <div id="dishes" class="screen"></div>
+  <div class="rowbtns noprint">
+    <button type="button" id="add" class="ghost">Añadir plato</button>
+  </div>
+  <ul class="legend screen" id="legend"></ul>
+
+  <section class="sheet" id="sheet" aria-hidden="true"></section>
+</main>
+
+<section class="rail noprint">
+  <div class="rowbtns">
+    <button type="button" id="print">Imprimir o PDF</button>
+    <button type="button" class="warn" id="wipe">Borrar esta carta</button>
+  </div>
+  <p>Los datos no salen de este navegador. Si borras los datos del sitio, se pierden.</p>
+  <p>La lista es el anexo II del Reglamento (UE) 1169/2011, en la versión consolidada. En España, los alimentos sin envasar se rigen también por el Real Decreto 126/2015. Léelos antes de colgar la hoja: <a href="https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32011R1169">EUR-Lex</a> y <a href="https://www.boe.es/eli/es/rd/2015/02/27/126">BOE</a>.</p>
+  <p>Esto no lleva las cuentas del bar. Si el negocio factura como autónomo, un programa de facturación es Quipu.</p>
+  <p><a class="linkish" href="https://getquipu.com/?via=dan" rel="noopener noreferrer" target="_blank">Ver Quipu</a></p>
+  <p>Enlace de afiliado. Si contratas un plan de pago, podemos llevar una comisión, sin coste extra para ti. Condiciones públicas del programa: 30% del importe neto pagado, hasta 12 meses en plan mensual o un solo pago en plan anual.</p>
+  <p>Canal: <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram Brújula</a>.</p>
+</section>
+<footer class="noprint">Brújula · Peluzzza · hoja que rellena el local · no sustituye asesoría ni el control de Sanidad</footer>
+
+<script>
+(function () {
+  var KEY = "alergenos-v1";
+  var ALLERGENS = [
+    { id: "gluten", n: "1", name: "Gluten" },
+    { id: "crustaceos", n: "2", name: "Crustáceos" },
+    { id: "huevos", n: "3", name: "Huevos" },
+    { id: "pescado", n: "4", name: "Pescado" },
+    { id: "cacahuetes", n: "5", name: "Cacahuetes" },
+    { id: "soja", n: "6", name: "Soja" },
+    { id: "leche", n: "7", name: "Leche" },
+    { id: "frutos", n: "8", name: "Frutos de cáscara" },
+    { id: "apio", n: "9", name: "Apio" },
+    { id: "mostaza", n: "10", name: "Mostaza" },
+    { id: "sesamo", n: "11", name: "Sésamo" },
+    { id: "sulfitos", n: "12", name: "Sulfitos" },
+    { id: "altramuces", n: "13", name: "Altramuces" },
+    { id: "moluscos", n: "14", name: "Moluscos" }
+  ];
+  var SECTIONS = ["", "Entrante", "Principal", "Postre", "Bebida", "Otro"];
+  var dishesEl = document.getElementById("dishes");
+  var legendEl = document.getElementById("legend");
+
+  ALLERGENS.forEach(function (a) {
+    var li = document.createElement("li");
+    li.textContent = a.n + " " + a.name;
+    legendEl.appendChild(li);
+  });
+
+  function emptyFlags() {
+    var flags = {};
+    ALLERGENS.forEach(function (a) { flags[a.id] = false; });
+    return flags;
+  }
+
+  function payload() {
+    return {
+      place: document.getElementById("place").value,
+      updated: document.getElementById("updated").value,
+      dishes: Array.prototype.map.call(dishesEl.querySelectorAll(".dish"), function (row) {
+        var flags = {};
+        ALLERGENS.forEach(function (a) {
+          flags[a.id] = row.querySelector('[data-id="' + a.id + '"]').classList.contains("on");
+        });
+        return {
+          name: row.querySelector(".name").value,
+          section: row.querySelector(".section").value,
+          flags: flags
+        };
+      })
+    };
+  }
+
+  function renderSheet() {
+    var data = payload();
+    var sheet = document.getElementById("sheet");
+    var head = "<h2>" + escapeHtml(data.place || "Carta de alérgenos") + "</h2>";
+    head += "<p>Fecha: " + escapeHtml(data.updated || "—") + ". Marca = el grupo está como ingrediente. No incluye trazas. No aplica las excepciones del anexo II.</p>";
+    var th = "<tr><th>Plato</th>";
+    ALLERGENS.forEach(function (a) { th += '<th class="n">' + a.n + "</th>"; });
+    th += "</tr>";
+    var body = "";
+    data.dishes.forEach(function (dish) {
+      var title = (dish.section ? dish.section + " · " : "") + (dish.name || "(sin nombre)");
+      body += "<tr><td>" + escapeHtml(title) + "</td>";
+      ALLERGENS.forEach(function (a) {
+        body += '<td class="n">' + (dish.flags[a.id] ? a.n : "") + "</td>";
+      });
+      body += "</tr>";
+    });
+    var legend = "<p>";
+    ALLERGENS.forEach(function (a, i) {
+      legend += (i ? " · " : "") + a.n + " " + a.name;
+    });
+    legend += "</p>";
+    sheet.innerHTML = head + "<table><thead>" + th + "</thead><tbody>" + body + "</tbody></table>" + legend;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  function persist() {
+    renderSheet();
+    try { localStorage.setItem(KEY, JSON.stringify(payload())); } catch (e) {}
+  }
+
+  function addDish(dish) {
+    if (dishesEl.children.length >= 40) return;
+    dish = dish || { name: "", section: "", flags: emptyFlags() };
+    var row = document.createElement("div");
+    row.className = "dish";
+    var options = SECTIONS.map(function (s) {
+      return '<option value="' + s + '">' + (s || "Sin grupo") + "</option>";
+    }).join("");
+    row.innerHTML =
+      '<div class="dish-head">' +
+        '<div><label>Plato</label><input class="name" autocomplete="off"></div>' +
+        '<div><label>Grupo</label><select class="section">' + options + "</select></div>" +
+        '<button type="button" class="ghost remove" aria-label="Quitar plato">Quitar</button>' +
+      '</div><div class="chips"></div>';
+    row.querySelector(".name").value = dish.name || "";
+    row.querySelector(".section").value = dish.section || "";
+    var chips = row.querySelector(".chips");
+    ALLERGENS.forEach(function (a) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip" + (dish.flags && dish.flags[a.id] ? " on" : "");
+      b.dataset.id = a.id;
+      b.textContent = a.n + " " + a.name;
+      b.setAttribute("aria-pressed", b.classList.contains("on") ? "true" : "false");
+      b.addEventListener("click", function () {
+        b.classList.toggle("on");
+        b.setAttribute("aria-pressed", b.classList.contains("on") ? "true" : "false");
+        persist();
+      });
+      chips.appendChild(b);
+    });
+    row.querySelector(".remove").addEventListener("click", function () {
+      if (dishesEl.children.length === 1) {
+        row.querySelector(".name").value = "";
+        row.querySelector(".section").value = "";
+        Array.prototype.forEach.call(row.querySelectorAll(".chip"), function (chip) {
+          chip.classList.remove("on");
+          chip.setAttribute("aria-pressed", "false");
+        });
+      } else {
+        row.remove();
+      }
+      persist();
+    });
+    row.querySelector(".name").addEventListener("input", persist);
+    row.querySelector(".section").addEventListener("change", persist);
+    dishesEl.appendChild(row);
+  }
+
+  function fill(data) {
+    data = data || {};
+    document.getElementById("place").value = data.place || "";
+    document.getElementById("updated").value = data.updated || "";
+    dishesEl.innerHTML = "";
+    var dishes = data.dishes && data.dishes.length ? data.dishes : [{}];
+    dishes.forEach(addDish);
+    renderSheet();
+  }
+
+  ["place", "updated"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", persist);
+  });
+  document.getElementById("add").addEventListener("click", function () {
+    addDish();
+    persist();
+  });
+  document.getElementById("print").addEventListener("click", function () {
+    renderSheet();
+    window.print();
+  });
+  document.getElementById("wipe").addEventListener("click", function () {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    fill({});
+  });
+
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { saved = null; }
+  fill(saved || {});
+})();
+</script>
+</body>
+</html>
