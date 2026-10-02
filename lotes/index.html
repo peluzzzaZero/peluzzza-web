@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Libro de lotes para una tienda de alimentación: proveedor, caducidad y lo que queda. En el móvil, sin cuenta. No es un TPV ni una trazabilidad certificada.">
+<title>Lotes — caducidad en tienda</title>
+<style>
+  :root {
+    --ink: #172033;
+    --mute: #5c6880;
+    --bg: #e7eef8;
+    --card: #f7faff;
+    --line: #c9d5ea;
+    --ink-btn: #1d4e89;
+    --btn-ink: #f4f8ff;
+    --bad: #8d2f2a;
+    --soon: #8a5a12;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, sans-serif;
+    line-height: 1.4;
+  }
+  header, .rail, footer, .card { width: min(980px, calc(100% - 24px)); margin: 0 auto; }
+  header { padding: 22px 0 8px; }
+  .mark {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--ink-btn);
+    margin: 0;
+  }
+  h1 { font-size: 38px; line-height: 0.95; margin: 4px 0 8px; font-family: Georgia, serif; font-weight: 650; }
+  .lede { margin: 0; color: var(--mute); max-width: 68ch; }
+  .card {
+    margin-top: 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  label { display: block; font-size: 12px; color: var(--mute); margin-bottom: 3px; }
+  input {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .place { max-width: 420px; }
+  .wrap { overflow-x: auto; margin-top: 12px; }
+  table { width: 100%; border-collapse: collapse; min-width: 860px; }
+  th { text-align: left; font-size: 12px; color: var(--mute); font-weight: 600; }
+  td { padding: 4px 6px 4px 0; vertical-align: top; }
+  td.date { width: 138px; }
+  td.qty { width: 88px; }
+  td.st { width: 92px; font-size: 13px; padding-top: 10px; }
+  td.act { width: 36px; }
+  tr.bad input { border-color: var(--bad); }
+  tr.soon input.exp { border-color: var(--soon); }
+  .totals { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 16px; font-variant-numeric: tabular-nums; }
+  .totals strong { font-family: Georgia, serif; font-size: 22px; }
+  button, .linkish {
+    font: inherit;
+    border-radius: 999px;
+    border: 0;
+    padding: 10px 14px;
+    background: var(--ink-btn);
+    color: var(--btn-ink);
+    text-decoration: none;
+    display: inline-block;
+  }
+  button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button.warn { background: transparent; color: var(--bad); border: 1px solid var(--bad); }
+  .rowbtns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .sub { margin: 8px 0 0; color: var(--mute); font-size: 13px; }
+  .rail p, footer { color: var(--mute); font-size: 14px; }
+  footer { padding: 8px 0 28px; }
+  @media (max-width: 720px) {
+    h1 { font-size: 32px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .noprint { display: none !important; }
+    .card { border: 0; width: auto; }
+    header, footer, .rail { width: auto; }
+    a { color: inherit; text-decoration: none; }
+    table { min-width: 0; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <p class="mark">Tienda</p>
+  <h1>Lotes</h1>
+  <p class="lede">Anota qué entró, de qué proveedor, con qué lote y cuándo caduca. Avisa a 7 días. Sin cuenta. No es la carta de alérgenos, ni un escandallo, ni un parte, ni una factura.</p>
+</header>
+<main class="card">
+  <div class="place">
+    <label for="place">Local</label>
+    <input id="place" autocomplete="organization">
+  </div>
+  <p class="sub">El artículo 18 del Reglamento (CE) 178/2002 pide poder decir de quién entró un alimento. Esta hoja no guarda a qué cliente salió cada unidad y no demuestra una inspección.</p>
+  <div class="wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Lote</th>
+          <th>Proveedor</th>
+          <th>Entrada</th>
+          <th>Caducidad</th>
+          <th>Queda</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="lines"></tbody>
+    </table>
+  </div>
+  <div class="rowbtns noprint">
+    <button type="button" id="add" class="ghost">Añadir lote</button>
+  </div>
+  <div class="totals" aria-live="polite">
+    <div><span>En fecha</span><br><strong id="n-ok">0</strong></div>
+    <div><span>Caduca en 7 días</span><br><strong id="n-soon">0</strong></div>
+    <div><span>Caducado</span><br><strong id="n-bad">0</strong></div>
+  </div>
+</main>
+<section class="rail noprint">
+  <div class="rowbtns">
+    <button type="button" id="print">Imprimir o PDF</button>
+    <button type="button" class="warn" id="wipe">Borrar este libro</button>
+  </div>
+  <p>Los datos no salen de este navegador. Si borras los datos del sitio, se pierden. La fecha de aviso usa el reloj de este teléfono.</p>
+  <p>Texto del reglamento: <a href="https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32002R0178">EUR-Lex 178/2002</a>.</p>
+  <p>Esto no lleva el almacén ni factura. Si el negocio factura como autónomo, un programa de facturación es Quipu.</p>
+  <p><a class="linkish" href="https://getquipu.com/?via=dan" rel="noopener noreferrer" target="_blank">Ver Quipu</a></p>
+  <p>Enlace de afiliado. Si contratas un plan de pago, podemos llevar una comisión, sin coste extra para ti. Condiciones públicas del programa: 30% del importe neto pagado, hasta 12 meses en plan mensual o un solo pago en plan anual.</p>
+  <p>Canal: <a href="https://t.me/+3NVNrxT7jTYyYmI0" rel="noopener noreferrer" target="_blank">Telegram Brújula</a>.</p>
+</section>
+<footer class="noprint">Brújula · Peluzzza · cuaderno del local · no sustituye asesoría ni el control de Sanidad</footer>
+<script>
+(function () {
+  var KEY = "lotes-v1";
+  var SOON = 7;
+  var linesEl = document.getElementById("lines");
+
+  function dayStamp(y, m, d) {
+    return Date.UTC(y, m - 1, d);
+  }
+
+  function parseISO(raw) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(raw || "").trim());
+    if (!m) return null;
+    var y = +m[1], mo = +m[2], d = +m[3];
+    if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+    return dayStamp(y, mo, d);
+  }
+
+  function todayStamp() {
+    var n = new Date();
+    return dayStamp(n.getFullYear(), n.getMonth() + 1, n.getDate());
+  }
+
+  function parseQty(raw) {
+    var s = String(raw || "").trim().replace(/\s/g, "");
+    if (!s) return null;
+    if (s.indexOf(",") !== -1) s = s.replace(/\./g, "").replace(",", ".");
+    var n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function statusOf(expRaw, qtyRaw) {
+    var exp = parseISO(expRaw);
+    var qty = parseQty(qtyRaw);
+    var empty = !String(expRaw || "").trim() && qty == null;
+    if (empty) return { label: "—", kind: "" };
+    if (exp == null && String(expRaw || "").trim()) return { label: "Fecha mala", kind: "bad" };
+    if (qty != null && qty < 0) return { label: "Cantidad mala", kind: "bad" };
+    if (exp != null) {
+      var days = Math.round((exp - todayStamp()) / 86400000);
+      if (days < 0) return { label: "Caducado", kind: "bad" };
+      if (days <= SOON) return { label: days === 0 ? "Hoy" : "En " + days + " d", kind: "soon" };
+    }
+    if (qty === 0) return { label: "Agotado", kind: "" };
+    return { label: "En fecha", kind: "ok" };
+  }
+
+  function readRow(tr) {
+    return {
+      name: tr.querySelector(".name").value,
+      lot: tr.querySelector(".lot").value,
+      supplier: tr.querySelector(".supplier").value,
+      inn: tr.querySelector(".inn").value,
+      exp: tr.querySelector(".exp").value,
+      qty: tr.querySelector(".qty").value
+    };
+  }
+
+  function render() {
+    var ok = 0, soon = 0, bad = 0;
+    Array.prototype.forEach.call(linesEl.querySelectorAll("tr"), function (tr) {
+      var row = readRow(tr);
+      var st = statusOf(row.exp, row.qty);
+      var named = row.name || row.lot || row.supplier || row.inn || row.exp || row.qty;
+      tr.classList.toggle("bad", st.kind === "bad");
+      tr.classList.toggle("soon", st.kind === "soon");
+      tr.querySelector(".st").textContent = named ? st.label : "—";
+      if (!named) return;
+      if (st.kind === "bad") bad += 1;
+      else if (st.kind === "soon") soon += 1;
+      else if (st.kind === "ok") ok += 1;
+    });
+    document.getElementById("n-ok").textContent = String(ok);
+    document.getElementById("n-soon").textContent = String(soon);
+    document.getElementById("n-bad").textContent = String(bad);
+  }
+
+  function payload() {
+    return {
+      place: document.getElementById("place").value,
+      lines: Array.prototype.map.call(linesEl.querySelectorAll("tr"), readRow)
+    };
+  }
+
+  function persist() {
+    render();
+    try { localStorage.setItem(KEY, JSON.stringify(payload())); } catch (e) {}
+  }
+
+  function addLine(line) {
+    if (linesEl.children.length >= 60) return;
+    line = line || {};
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td><input class="name" aria-label="Producto" autocomplete="off"></td>' +
+      '<td><input class="lot" aria-label="Lote" autocomplete="off"></td>' +
+      '<td><input class="supplier" aria-label="Proveedor" autocomplete="off"></td>' +
+      '<td class="date"><input class="inn" type="date" aria-label="Fecha de entrada"></td>' +
+      '<td class="date"><input class="exp" type="date" aria-label="Fecha de caducidad"></td>' +
+      '<td class="qty"><input class="qty" inputmode="decimal" aria-label="Cantidad que queda"></td>' +
+      '<td class="st">—</td>' +
+      '<td class="act noprint"><button type="button" class="ghost" aria-label="Quitar lote">×</button></td>';
+    tr.querySelector(".name").value = line.name || "";
+    tr.querySelector(".lot").value = line.lot || "";
+    tr.querySelector(".supplier").value = line.supplier || "";
+    tr.querySelector(".inn").value = line.inn || "";
+    tr.querySelector(".exp").value = line.exp || "";
+    tr.querySelector(".qty").value = line.qty || "";
+    tr.querySelector("button").addEventListener("click", function () {
+      if (linesEl.children.length === 1) {
+        Array.prototype.forEach.call(tr.querySelectorAll("input"), function (input) { input.value = ""; });
+      } else {
+        tr.remove();
+      }
+      persist();
+    });
+    Array.prototype.forEach.call(tr.querySelectorAll("input"), function (input) {
+      input.addEventListener("input", persist);
+      input.addEventListener("change", persist);
+    });
+    linesEl.appendChild(tr);
+  }
+
+  function fill(data) {
+    data = data || {};
+    document.getElementById("place").value = data.place || "";
+    linesEl.innerHTML = "";
+    var lines = data.lines && data.lines.length ? data.lines : [{}, {}, {}];
+    lines.forEach(addLine);
+    render();
+  }
+
+  document.getElementById("place").addEventListener("input", persist);
+  document.getElementById("add").addEventListener("click", function () {
+    addLine();
+    persist();
+  });
+  document.getElementById("print").addEventListener("click", function () { window.print(); });
+  document.getElementById("wipe").addEventListener("click", function () {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    fill({});
+  });
+
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { saved = null; }
+  fill(saved || {});
+})();
+</script>
+</body>
+</html>
