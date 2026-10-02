@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesa — peluzzza.com</title>
+<style>
+  body { margin: 0; font-family: Georgia, serif; background: #f4efe6; color: #1c1915; }
+  main { width: min(720px, calc(100% - 32px)); margin: 32px auto 72px; }
+  h1 { font-size: 36px; margin: 0 0 8px; }
+  h2 { font-size: 20px; margin: 28px 0 8px; }
+  p, li { line-height: 1.45; }
+  a { color: #c4512c; }
+  .lead { color: #6d645b; margin-top: 0; }
+  .card { background: #fffaf3; border: 1px solid #e2d8c8; border-radius: 14px; padding: 14px 16px; margin: 8px 0; }
+  .card strong { display: block; margin-bottom: 4px; }
+  .status { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+  .status li { background: #fffaf3; border: 1px solid #e2d8c8; border-radius: 999px; padding: 6px 12px; }
+  .order { font-size: 18px; }
+  @media (max-width: 640px) {
+    h1 { font-size: 30px; }
+    main { margin-top: 20px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p><a href="/">peluzzza.com</a></p>
+  <h1>Mesa</h1>
+  <p class="lead">Aquí están los parámetros. Aquí se escribe la instrucción. La empresa, cuando se abra, nace de esta página.</p>
+
+  <ul class="status">
+    <li>Empresa: ninguna</li>
+    <li>Créditos: 22, sin gastar</li>
+    <li>Nacimiento: no enviado</li>
+  </ul>
+
+  <h2>Parámetros</h2>
+  <div class="card"><strong>Objetivo</strong> Inventar y sacar una cosa pequeña que alguien pueda pagar.</div>
+  <div class="card"><strong>Dirección</strong> Este asiento dirige. Polsia opera. Un objetivo cada vez.</div>
+  <div class="card"><strong>Chat</strong> Es la segunda ventana. No cabe la orden completa.</div>
+  <div class="card"><strong>Dominio</strong> Esta página está en peluzzza.com/mesa. No se compra otro dominio. No se toca el DNS.</div>
+  <div class="card"><strong>Prohibido</strong> Anuncios, compras, créditos extra, correo a desconocidos, Stripe, contenido explícito en público, repos que ya existen, personas reales.</div>
+
+  <h2>Instrucción vigente</h2>
+  <div class="card order" id="instruction">Órdenes. Viven en peluzzza.com/mesa. Léelas antes de cada tarea. Objetivo: inventar y sacar una cosa pequeña que un desconocido pueda pagar. Yo dirijo. Tú operas. Un objetivo cada vez. No elijas el negocio tú. No hagas: anuncios, gastar dinero, comprar créditos, comprar un dominio, escribir a nadie, conectar Stripe, publicar contenido explícito, tocar peluzzza.com ni el DNS, conectar un repositorio que ya exista, ni usar la cara o el nombre de una persona real. Hecho: una nota que diga qué cambió, qué costó y qué rechazaste. Si un paso pide dinero o el correo de un desconocido, recházalo y escríbelo.</div>
+
+  <h2>Cómo se abre la empresa</h2>
+  <div class="card"><strong>1</strong> El objetivo se escribe aquí, en una frase. Hoy sigue general a propósito: no hay negocio elegido.</div>
+  <div class="card"><strong>2</strong> Se crea con solo esa frase. Sin nombre, sin “sorpréndeme”, sin un briefing largo.</div>
+  <div class="card"><strong>3</strong> El primer mensaje es la instrucción de arriba, por la API. No por el cuadro de creación.</div>
+  <div class="card"><strong>4</strong> Si publica, escribe o gasta, se pausa el mismo día.</div>
+
+  <h2>Frase de nacimiento, aún no enviada</h2>
+  <div class="card" id="birth">Un producto pequeño y original que alguien pueda pagar. Yo dirijo. Tú operas.</div>
+
+  <h2>Por dónde se dirige</h2>
+  <div class="card">La API de la cuenta, el MCP local y el ACP local leen esta página. El chat solo recibe un objetivo.</div>
+</main>
+</body>
+</html>
