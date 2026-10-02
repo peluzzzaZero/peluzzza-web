@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
 <title>Mesa — peluzzza.com</title>
 <style>
   body { margin: 0; font-family: Georgia, serif; background: #f4efe6; color: #1c1915; }
@@ -17,6 +18,11 @@
   .status { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
   .status li { background: #fffaf3; border: 1px solid #e2d8c8; border-radius: 999px; padding: 6px 12px; }
   .order { font-size: 18px; }
+  form { display: flex; flex-direction: column; gap: 8px; max-width: 360px; }
+  input, button { font: inherit; font-size: 18px; padding: 10px 12px; border-radius: 10px; }
+  input { border: 1px solid #e2d8c8; background: #fffaf3; color: #1c1915; width: 100%; box-sizing: border-box; }
+  button { background: #c4512c; color: #fffaf3; border: 0; }
+  #err { color: #c4512c; margin: 0; }
   @media (max-width: 640px) {
     h1 { font-size: 30px; }
     main { margin-top: 20px; }
@@ -27,40 +33,52 @@
 <main>
   <p><a href="/">peluzzza.com</a></p>
   <h1>Mesa</h1>
-  <p class="lead">Aquí están los parámetros. Aquí se escribe la instrucción. La empresa, cuando se abra, nace de esta página.</p>
-
-  <ul class="status">
-    <li>Empresa: abierta, en pausa</li>
-    <li>Créditos: 21</li>
-    <li>Producto: no elegido</li>
-  </ul>
-
-  <h2>Parámetros</h2>
-  <div class="card"><strong>Objetivo</strong> Inventar y sacar una cosa pequeña que alguien pueda pagar.</div>
-  <div class="card"><strong>Dirección</strong> Este asiento dirige. Polsia opera. Un objetivo cada vez.</div>
-  <div class="card"><strong>Chat</strong> Es la segunda ventana. No cabe la orden completa.</div>
-  <div class="card"><strong>Dominio</strong> Esta página está en peluzzza.com/mesa. No se compra otro dominio. No se toca el DNS.</div>
-  <div class="card"><strong>Prohibido</strong> Anuncios, compras, créditos extra, correo a desconocidos, Stripe, contenido explícito en público, repos que ya existen, personas reales.</div>
-
-  <h2>Instrucción vigente</h2>
-  <div class="card order" id="instruction">Órdenes. Viven en peluzzza.com/mesa. Léelas antes de cada tarea. Objetivo: inventar y sacar una cosa pequeña que un desconocido pueda pagar. Yo dirijo. Tú operas. Un objetivo cada vez. No elijas el negocio tú. No hagas: anuncios, gastar dinero, comprar créditos, comprar un dominio, escribir a nadie, conectar Stripe, publicar contenido explícito, tocar peluzzza.com ni el DNS, conectar un repositorio que ya exista, ni usar la cara o el nombre de una persona real. Hecho: una nota que diga qué cambió, qué costó y qué rechazaste. Si un paso pide dinero o el correo de un desconocido, recházalo y escríbelo.</div>
-
-  <h2>Cómo opera</h2>
-  <div class="card"><strong>Investigación</strong> Se abre con una frase, no con un briefing. La primera noche no elige negocio. Correo, redes y anuncios quedan apagados. Anuncios de pago no entran en el plan.</div>
-  <div class="card"><strong>Cada día</strong> Un solo objetivo, escrito aquí. Por la mañana se lee la nota. Si escribió, publicó en redes o gastó, se pausa ese canal el mismo día.</div>
-  <div class="card"><strong>Esta página</strong> Es el único sitio de las instrucciones. El chat solo recibe un objetivo.</div>
-
-  <h2>Estado de hoy</h2>
-  <div class="card">Se abrió con una sola frase. El agente se nombró Zarza Lista y empezó una landing de un producto que nadie eligió. Está en pausa. Ese nombre no vale. Correo, redes y anuncios no estaban en marcha. La página de espera no se publicó.</div>
-
-  <h2>Objetivo de hoy</h2>
-  <div class="card order" id="aim">Primera noche. Publica una sola página en el subdominio incluido. Título: Mesa. Texto exacto: el producto todavía no está elegido. No elijas un negocio. No escribas a nadie. No publiques en redes. No gastes. Cuando la página esté en línea, para.</div>
-
-  <h2>Frase de nacimiento, aún no enviada</h2>
-  <div class="card" id="birth">Un producto pequeño y original que alguien pueda pagar. Yo dirijo. Tú operas.</div>
-
-  <h2>Por dónde se dirige</h2>
-  <div class="card">La API de la cuenta, el MCP local y el ACP local leen esta página. El chat solo recibe un objetivo.</div>
+  <p class="lead">Página privada.</p>
+  <form id="gate">
+    <label for="pw">Contraseña</label>
+    <input id="pw" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit">Entrar</button>
+    <p id="err" hidden>Contraseña incorrecta.</p>
+  </form>
+  <div id="body" hidden></div>
 </main>
+<script id="pack" type="application/json">{"iter":150000,"salt":"5hlCiuUjMxfEgXHj/Iy2lQ==","iv":"KxnsGHqnmjJLbLM8","data":"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"}</script>
+<script>
+const pack = JSON.parse(document.getElementById("pack").textContent);
+const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+document.getElementById("gate").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const form = ev.currentTarget;
+  const err = document.getElementById("err");
+  err.hidden = true;
+  try {
+    const material = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(document.getElementById("pw").value),
+      "PBKDF2",
+      false,
+      ["deriveKey"]
+    );
+    const key = await crypto.subtle.deriveKey(
+      {name: "PBKDF2", salt: b64(pack.salt), iterations: pack.iter, hash: "SHA-256"},
+      material,
+      {name: "AES-GCM", length: 256},
+      false,
+      ["decrypt"]
+    );
+    const clear = await crypto.subtle.decrypt(
+      {name: "AES-GCM", iv: b64(pack.iv)},
+      key,
+      b64(pack.data)
+    );
+    const slot = document.getElementById("body");
+    slot.innerHTML = new TextDecoder().decode(clear);
+    slot.hidden = false;
+    form.hidden = true;
+  } catch (e) {
+    err.hidden = false;
+  }
+});
+</script>
 </body>
 </html>
